@@ -22,4 +22,10 @@ export const supabase = createClient(
   { auth: { persistSession: false } }
 );
 
-export type EntityType = "company" | "company_sector" | "lead" | "follow_up";
+export type EntityType =
+  | "company"
+  | "company_sector"
+  | "lead"
+  | "follow_up"
+  | "supply_company"
+  | "supply_follow_up";

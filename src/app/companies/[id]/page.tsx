@@ -3,6 +3,7 @@ import { supabase } from "@/lib/supabase";
 import { calculateQuota, getMomConfig, CompanyForQuota } from "@/lib/mom/quota";
 import { getCompanyFieldDefs, getCompanySectorFieldDefs, deleteCompanySector } from "@/app/companies/actions";
 import CustomFieldsDisplay from "@/components/CustomFieldsDisplay";
+import SubmitButton from "@/components/SubmitButton";
 import { notFound } from "next/navigation";
 
 export const dynamic = "force-dynamic";
@@ -126,9 +127,9 @@ export default async function CompanyDetailPage({ params }: { params: Promise<{ 
               <CustomFieldsDisplay definitions={sectorFieldDefs} values={cs.custom_fields} />
 
               <form action={deleteWithId} className="mt-4 relative">
-                <button type="submit" className="btn-danger-link text-xs">
+                <SubmitButton pendingText="Deleting..." className="btn-danger-link text-xs">
                   Delete this sector
-                </button>
+                </SubmitButton>
               </form>
             </div>
           );
@@ -150,7 +151,7 @@ export default async function CompanyDetailPage({ params }: { params: Promise<{ 
                 <p className="font-medium text-slate-100">{lead.job_title || "(no job title)"}</p>
                 <p className="text-sm text-muted">
                   {lead.workers_needed ?? "?"} × {lead.worker_type || "worker"} ·{" "}
-                  {lead.pay_offered ? `S$${lead.pay_offered}/${lead.pay_period}` : "pay TBC"}
+                  {lead.pay_offered ? `${lead.pay_offered}/${lead.pay_period}` : "pay TBC"}
                 </p>
               </div>
               <span className={`badge border ${LEAD_STATUS_COLORS[lead.status] ?? ""}`}>

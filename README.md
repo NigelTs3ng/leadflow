@@ -19,9 +19,13 @@ Stack: **Next.js (App Router, TypeScript, Tailwind)** + **Supabase (Postgres)**,
   S Pass slots, and an estimated monthly levy.
 - **Settings → MOM Rates**: edit the underlying quota %, S Pass %, and levy rate tables yourself
   whenever MOM updates them, no code changes needed.
-- **Settings → Custom fields**: add a new field to Company / Company sector / Lead / Follow-up
-  forms at any time. New fields are automatically backfilled onto every existing record so you
-  can edit them in right away — no separate migration step.
+- **Settings → Custom fields**: add a new field to Company / Company sector / Lead / Follow-up /
+  Supply Gen company / Supply Gen follow-up forms at any time. New fields are automatically
+  backfilled onto every existing record so you can edit them in right away — no separate migration step.
+- **Supply Gen**: a separate section for tracking overseas manpower supply companies/agents (e.g.
+  in China, India, Bangladesh) with their own contact info, notes, and follow-up log.
+- **Pending**: one page listing every pending follow-up across both leads and Supply Gen, soonest
+  due first, click-through straight to the record.
 - No login, single user, by design — easy to open on your phone via the Vercel URL.
 
 ## 1. Create your Supabase project
@@ -141,6 +145,12 @@ src/
     leads/[id]/edit/            Edit lead
     leads/new/                  Add lead
     leads/actions.ts            Server actions: leads + follow-ups CRUD
+    supply-gen/page.tsx         Supply Gen company list
+    supply-gen/[id]/page.tsx    Supply Gen company detail + follow-up log
+    supply-gen/[id]/edit/       Edit/delete a Supply Gen company
+    supply-gen/new/             Add Supply Gen company
+    supply-gen/actions.ts       Server actions: Supply Gen company + follow-up CRUD
+    pending/page.tsx            All pending follow-ups (leads + Supply Gen), click-through
     settings/                   Settings hub
     settings/fields/            Custom field manager
     settings/rates/             MOM rate table editor (raw JSON)
@@ -152,6 +162,7 @@ src/
   components/
     CustomFieldsInput.tsx       Renders dynamic form fields
     CustomFieldsDisplay.tsx     Renders dynamic field values read-only
+    SubmitButton.tsx            Submit button with pending-state spinner
 supabase/
   schema.sql                    Full DB schema — run once in Supabase SQL editor
 ```

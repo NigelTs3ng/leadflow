@@ -15,6 +15,8 @@ const TABLE_BY_ENTITY: Record<EntityType, string> = {
   company_sector: "company_sectors",
   lead: "leads",
   follow_up: "follow_ups",
+  supply_company: "supply_companies",
+  supply_follow_up: "supply_follow_ups",
 };
 
 export async function getFieldDefinitions(entityType: EntityType): Promise<CustomFieldDefinition[]> {

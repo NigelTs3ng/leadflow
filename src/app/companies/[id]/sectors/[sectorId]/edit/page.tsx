@@ -1,5 +1,6 @@
 import { updateCompanySector, deleteCompanySector, getCompanySectorFieldDefs } from "@/app/companies/actions";
 import CustomFieldsInput from "@/components/CustomFieldsInput";
+import SubmitButton from "@/components/SubmitButton";
 import { supabase } from "@/lib/supabase";
 import Link from "next/link";
 import { notFound } from "next/navigation";
@@ -133,16 +134,14 @@ export default async function EditCompanySectorPage({
         <CustomFieldsInput definitions={fieldDefs} values={companySector.custom_fields} />
 
         <div className="flex justify-between pt-2">
-          <button type="submit" className="btn-primary">
-            Save changes
-          </button>
+          <SubmitButton pendingText="Saving...">Save changes</SubmitButton>
         </div>
       </form>
 
       <form action={deleteWithId} className="mt-4">
-        <button type="submit" className="btn-danger-link">
+        <SubmitButton pendingText="Deleting..." className="btn-danger-link">
           Delete this sector
-        </button>
+        </SubmitButton>
       </form>
     </div>
   );

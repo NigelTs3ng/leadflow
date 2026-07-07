@@ -1,5 +1,6 @@
 import { createLead, getLeadFieldDefs } from "@/app/leads/actions";
 import CustomFieldsInput from "@/components/CustomFieldsInput";
+import SubmitButton from "@/components/SubmitButton";
 import { supabase } from "@/lib/supabase";
 import Link from "next/link";
 import { redirect } from "next/navigation";
@@ -29,15 +30,18 @@ export default async function NewLeadPage({
       <form action={createLead} className="glass-panel p-6 space-y-4">
         <input type="hidden" name="company_id" value={company_id} />
 
-        <div className="grid grid-cols-2 gap-4">
-          <div>
-            <label className="field-label">Job title</label>
-            <input name="job_title" className="input-field" />
-          </div>
-          <div>
-            <label className="field-label">Job description</label>
-            <input name="job_description" placeholder="e.g. scope of works, site location" className="input-field" />
-          </div>
+        <div>
+          <label className="field-label">Job title</label>
+          <input name="job_title" className="input-field" />
+        </div>
+        <div>
+          <label className="field-label">Job description</label>
+          <textarea
+            name="job_description"
+            rows={4}
+            placeholder="e.g. scope of works, site location"
+            className="input-field"
+          />
         </div>
 
         <div className="grid grid-cols-2 gap-4">
@@ -61,7 +65,7 @@ export default async function NewLeadPage({
           <div className="flex gap-2">
             <div className="flex-1">
               <label className="field-label">Pay offered</label>
-              <input type="number" step="0.01" name="pay_offered" className="input-field" />
+              <input type="text" name="pay_offered" placeholder="e.g. 1,800 or 60-80/day" className="input-field" />
             </div>
             <div className="w-28">
               <label className="field-label">Period</label>
@@ -84,9 +88,7 @@ export default async function NewLeadPage({
 
         <CustomFieldsInput definitions={fieldDefs} />
 
-        <button type="submit" className="btn-primary">
-          Save lead
-        </button>
+        <SubmitButton pendingText="Saving...">Save lead</SubmitButton>
       </form>
     </div>
   );

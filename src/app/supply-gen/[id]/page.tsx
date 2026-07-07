@@ -1,5 +1,12 @@
 import { supabase } from "@/lib/supabase";
-import { createFollowUp, updateFollowUp, deleteFollowUp, getLeadFieldDefs, getFollowUpFieldDefs, deleteLead } from "@/app/leads/actions";
+import {
+  createSupplyFollowUp,
+  updateSupplyFollowUp,
+  deleteSupplyFollowUp,
+  getSupplyCompanyFieldDefs,
+  getSupplyFollowUpFieldDefs,
+  deleteSupplyCompany,
+} from "@/app/supply-gen/actions";
 import CustomFieldsDisplay from "@/components/CustomFieldsDisplay";
 import CustomFieldsInput from "@/components/CustomFieldsInput";
 import SubmitButton from "@/components/SubmitButton";
@@ -9,82 +16,54 @@ import { format } from "date-fns";
 
 export const dynamic = "force-dynamic";
 
-const STATUS_COLORS: Record<string, string> = {
-  unfilled: "border-amber-500/20 bg-amber-500/15 text-amber-300",
-  filled: "border-emerald-500/20 bg-emerald-500/15 text-emerald-300",
-};
-
 const FOLLOWUP_STATUS_COLORS: Record<string, string> = {
   pending: "border-amber-500/20 bg-amber-500/15 text-amber-300",
   done: "border-emerald-500/20 bg-emerald-500/15 text-emerald-300",
   cancelled: "border-slate-500/20 bg-slate-500/15 text-slate-400",
 };
 
-export default async function LeadDetailPage({ params }: { params: Promise<{ id: string }> }) {
+export default async function SupplyCompanyDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
 
-  const { data: lead, error } = await supabase.from("leads").select("*, companies(id, name)").eq("id", id).single();
-  if (error || !lead) notFound();
+  const { data: company, error } = await supabase.from("supply_companies").select("*").eq("id", id).single();
+  if (error || !company) notFound();
 
   const { data: followUps } = await supabase
-    .from("follow_ups")
+    .from("supply_follow_ups")
     .select("*")
-    .eq("lead_id", id)
+    .eq("supply_company_id", id)
     .order("created_at", { ascending: false });
 
-  const leadFieldDefs = await getLeadFieldDefs();
-  const followUpFieldDefs = await getFollowUpFieldDefs();
+  const fieldDefs = await getSupplyCompanyFieldDefs();
+  const followUpFieldDefs = await getSupplyFollowUpFieldDefs();
 
-  const company = (lead as unknown as { companies: { id: string; name: string } }).companies;
-  const createFollowUpWithId = createFollowUp.bind(null, id);
-  const deleteLeadWithId = deleteLead.bind(null, id, company.id);
+  const createFollowUpWithId = createSupplyFollowUp.bind(null, id);
+  const deleteCompanyWithId = deleteSupplyCompany.bind(null, id);
 
   return (
     <div className="max-w-3xl">
-      <Link href={`/companies/${company.id}`} className="link-back">
-        ← Back to {company.name}
+      <Link href="/supply-gen" className="link-back">
+        ← Back to Supply Gen
       </Link>
 
       <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between mt-2 mb-6">
         <div>
-          <h1 className="text-2xl font-bold text-slate-100">{lead.job_title || "(no job title)"}</h1>
-          <p className="text-sm text-muted">{company.name}</p>
+          <h1 className="text-2xl font-bold text-slate-100">{company.name}</h1>
+          {company.country && <span className="badge-neutral mt-1">{company.country}</span>}
         </div>
-        <div className="flex gap-2 items-center">
-          <span className={`badge border ${STATUS_COLORS[lead.status] ?? ""}`}>{lead.status}</span>
-          <Link href={`/leads/${id}/edit`} className="btn-secondary flex-1 sm:flex-none text-center">
-            Edit
-          </Link>
-        </div>
+        <Link href={`/supply-gen/${id}/edit`} className="btn-secondary flex-1 sm:flex-none text-center">
+          Edit
+        </Link>
       </div>
 
       <div className="glass-panel p-5 mb-6 text-sm">
         <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
-          <Field label="Workers needed" value={lead.workers_needed ?? "—"} />
-          <Field label="Worker type" value={lead.worker_type || "—"} />
-          <Field label="Pass type" value={lead.pass_type || "—"} />
-          <Field label="Pay offered" value={lead.pay_offered ? `${lead.pay_offered} / ${lead.pay_period}` : "—"} />
-          <Field
-            label="Last contacted"
-            value={lead.last_contacted_at ? format(new Date(lead.last_contacted_at), "d MMM yyyy, HH:mm") : "—"}
-          />
+          <Field label="Contact person" value={company.contact_person || "—"} />
+          <Field label="Contact number" value={company.contact_number || "—"} />
+          <Field label="Contact email" value={company.contact_email || "—"} />
         </div>
-
-        <details className="mt-3 border-t border-white/10 pt-3 group">
-          <summary className="cursor-pointer list-none flex items-center gap-2 min-w-0">
-            <span className="text-faint text-xs shrink-0">Job description</span>
-            <span className="text-sm text-slate-300 truncate min-w-0 flex-1 group-open:hidden">
-              {lead.job_description || "—"}
-            </span>
-            <span className="text-xs text-cyan-400 shrink-0">
-              <span className="group-open:hidden">Show more ▾</span>
-              <span className="hidden group-open:inline">Show less ▴</span>
-            </span>
-          </summary>
-          <p className="text-sm text-slate-300 whitespace-pre-wrap mt-2">{lead.job_description || "—"}</p>
-        </details>
-
-        <CustomFieldsDisplay definitions={leadFieldDefs} values={lead.custom_fields} />
+        {company.notes && <p className="mt-3 text-slate-300 whitespace-pre-wrap">{company.notes}</p>}
+        <CustomFieldsDisplay definitions={fieldDefs} values={company.custom_fields} />
       </div>
 
       {/* Follow ups */}
@@ -131,8 +110,8 @@ export default async function LeadDetailPage({ params }: { params: Promise<{ id:
 
       <div className="relative space-y-3 pl-5 before:absolute before:left-[7px] before:top-2 before:bottom-2 before:w-px before:bg-gradient-to-b before:from-cyan-400/40 before:via-white/10 before:to-transparent">
         {(followUps ?? []).map((f) => {
-          const updateWithId = updateFollowUp.bind(null, f.id, id);
-          const deleteWithId = deleteFollowUp.bind(null, f.id, id);
+          const updateWithId = updateSupplyFollowUp.bind(null, f.id, id);
+          const deleteWithId = deleteSupplyFollowUp.bind(null, f.id, id);
           return (
             <details key={f.id} className="glass-panel relative p-4 group">
               <span className="absolute -left-[27px] top-5 h-3 w-3 rounded-full bg-cyan-400 shadow-[0_0_8px_2px_rgba(34,211,238,0.6)]" />
@@ -208,9 +187,9 @@ export default async function LeadDetailPage({ params }: { params: Promise<{ id:
         )}
       </div>
 
-      <form action={deleteLeadWithId} className="mt-8">
+      <form action={deleteCompanyWithId} className="mt-8">
         <SubmitButton pendingText="Deleting..." className="btn-danger-link">
-          Delete this lead
+          Delete this supply company
         </SubmitButton>
       </form>
     </div>

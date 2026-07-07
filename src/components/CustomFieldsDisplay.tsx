@@ -19,7 +19,13 @@ export default function CustomFieldsDisplay({
         return (
           <div key={def.id}>
             <dt className="text-faint">{def.label}</dt>
-            <dd className="text-slate-200 font-medium">{display}</dd>
+            <dd
+              className={`text-slate-200 font-medium ${
+                def.field_type === "textarea" ? "whitespace-pre-wrap" : ""
+              }`}
+            >
+              {display}
+            </dd>
           </div>
         );
       })}

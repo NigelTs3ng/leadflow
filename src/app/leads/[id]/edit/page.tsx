@@ -1,5 +1,6 @@
 import { updateLead, getLeadFieldDefs } from "@/app/leads/actions";
 import CustomFieldsInput from "@/components/CustomFieldsInput";
+import SubmitButton from "@/components/SubmitButton";
 import { supabase } from "@/lib/supabase";
 import Link from "next/link";
 import { notFound } from "next/navigation";
@@ -23,15 +24,18 @@ export default async function EditLeadPage({ params }: { params: Promise<{ id: s
       <h1 className="text-2xl font-bold mt-2 mb-6 heading-gradient">Edit lead — {company.name}</h1>
 
       <form action={updateWithId} className="glass-panel p-6 space-y-4">
-        <div className="grid grid-cols-2 gap-4">
-          <div>
-            <label className="field-label">Job title</label>
-            <input name="job_title" defaultValue={lead.job_title ?? ""} className="input-field" />
-          </div>
-          <div>
-            <label className="field-label">Job description</label>
-            <input name="job_description" defaultValue={lead.job_description ?? ""} className="input-field" />
-          </div>
+        <div>
+          <label className="field-label">Job title</label>
+          <input name="job_title" defaultValue={lead.job_title ?? ""} className="input-field" />
+        </div>
+        <div>
+          <label className="field-label">Job description</label>
+          <textarea
+            name="job_description"
+            rows={4}
+            defaultValue={lead.job_description ?? ""}
+            className="input-field"
+          />
         </div>
 
         <div className="grid grid-cols-2 gap-4">
@@ -55,7 +59,7 @@ export default async function EditLeadPage({ params }: { params: Promise<{ id: s
           <div className="flex gap-2">
             <div className="flex-1">
               <label className="field-label">Pay offered</label>
-              <input type="number" step="0.01" name="pay_offered" defaultValue={lead.pay_offered ?? ""} className="input-field" />
+              <input type="text" name="pay_offered" defaultValue={lead.pay_offered ?? ""} placeholder="e.g. 1,800 or 60-80/day" className="input-field" />
             </div>
             <div className="w-28">
               <label className="field-label">Period</label>
@@ -78,9 +82,7 @@ export default async function EditLeadPage({ params }: { params: Promise<{ id: s
 
         <CustomFieldsInput definitions={fieldDefs} values={lead.custom_fields} />
 
-        <button type="submit" className="btn-primary">
-          Save changes
-        </button>
+        <SubmitButton pendingText="Saving...">Save changes</SubmitButton>
       </form>
     </div>
   );

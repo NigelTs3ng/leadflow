@@ -1,5 +1,6 @@
 import { createCompany, getCompanyFieldDefs } from "@/app/companies/actions";
 import CustomFieldsInput from "@/components/CustomFieldsInput";
+import SubmitButton from "@/components/SubmitButton";
 import Link from "next/link";
 
 export const dynamic = "force-dynamic";
@@ -27,9 +28,7 @@ export default async function NewCompanyPage() {
 
         <CustomFieldsInput definitions={fieldDefs} />
 
-        <button type="submit" className="btn-primary">
-          Save company
-        </button>
+        <SubmitButton pendingText="Saving...">Save company</SubmitButton>
       </form>
 
       <p className="text-sm text-muted mt-4">

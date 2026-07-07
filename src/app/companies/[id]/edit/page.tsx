@@ -1,5 +1,6 @@
 import { updateCompany, deleteCompany, getCompanyFieldDefs } from "@/app/companies/actions";
 import CustomFieldsInput from "@/components/CustomFieldsInput";
+import SubmitButton from "@/components/SubmitButton";
 import { supabase } from "@/lib/supabase";
 import Link from "next/link";
 import { notFound } from "next/navigation";
@@ -36,16 +37,14 @@ export default async function EditCompanyPage({ params }: { params: Promise<{ id
         <CustomFieldsInput definitions={fieldDefs} values={company.custom_fields} />
 
         <div className="flex justify-between pt-2">
-          <button type="submit" className="btn-primary">
-            Save changes
-          </button>
+          <SubmitButton pendingText="Saving...">Save changes</SubmitButton>
         </div>
       </form>
 
       <form action={deleteWithId} className="mt-4">
-        <button type="submit" className="btn-danger-link">
+        <SubmitButton pendingText="Deleting..." className="btn-danger-link">
           Delete this company and all its sectors and leads
-        </button>
+        </SubmitButton>
       </form>
     </div>
   );

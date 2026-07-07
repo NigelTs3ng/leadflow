@@ -31,6 +31,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             </Link>
             <nav className="flex gap-6">
               <NavLink href="/">Companies</NavLink>
+              <NavLink href="/supply-gen">Supply Gen</NavLink>
               <NavLink href="/pending">Pending</NavLink>
               <NavLink href="/settings">Settings</NavLink>
             </nav>

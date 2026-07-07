@@ -1,4 +1,5 @@
 import { addCustomField, removeCustomField, listCustomFields } from "@/app/settings/actions";
+import SubmitButton from "@/components/SubmitButton";
 import Link from "next/link";
 
 export const dynamic = "force-dynamic";
@@ -8,6 +9,8 @@ const ENTITY_LABELS: Record<string, string> = {
   company_sector: "Company sector",
   lead: "Lead",
   follow_up: "Follow-up",
+  supply_company: "Supply Gen company",
+  supply_follow_up: "Supply Gen follow-up",
 };
 
 export default async function CustomFieldsPage() {
@@ -30,6 +33,8 @@ export default async function CustomFieldsPage() {
               <option value="company_sector">Company sector</option>
               <option value="lead">Lead</option>
               <option value="follow_up">Follow-up</option>
+              <option value="supply_company">Supply Gen company</option>
+              <option value="supply_follow_up">Supply Gen follow-up</option>
             </select>
           </div>
           <div>
@@ -52,12 +57,10 @@ export default async function CustomFieldsPage() {
           <label className="field-label">Dropdown options (comma-separated — only used for Dropdown type)</label>
           <input name="options" placeholder="e.g. Yes, No, Pending" className="input-field" />
         </div>
-        <button type="submit" className="btn-primary">
-          Add field
-        </button>
+        <SubmitButton pendingText="Adding...">Add field</SubmitButton>
       </form>
 
-      {(["company", "company_sector", "lead", "follow_up"] as const).map((entity) => (
+      {(["company", "company_sector", "lead", "follow_up", "supply_company", "supply_follow_up"] as const).map((entity) => (
         <div key={entity} className="mb-6">
           <h2 className="font-semibold mb-2 text-slate-100">{ENTITY_LABELS[entity]} fields</h2>
           <div className="glass-panel divide-y divide-white/10">
@@ -75,9 +78,9 @@ export default async function CustomFieldsPage() {
                       <span className="text-faint">({f.field_type})</span>
                     </div>
                     <form action={removeWithId}>
-                      <button type="submit" className="btn-danger-link text-xs">
+                      <SubmitButton pendingText="Removing..." className="btn-danger-link text-xs">
                         Remove
-                      </button>
+                      </SubmitButton>
                     </form>
                   </div>
                 );

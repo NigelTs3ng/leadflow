@@ -45,7 +45,7 @@ create table if not exists leads (
   workers_needed integer,
   worker_type text,          -- e.g. General Labourer, Scaffolder, Electrician, Supervisor
   pass_type text default 'Work Permit (NTS)', -- Work Permit (NTS) | Work Permit (PRC) | S Pass | Employment Pass
-  pay_offered numeric,
+  pay_offered text,        -- free text, e.g. "1,800" or "60-80/day" or "negotiable"
   pay_period text default 'monthly', -- monthly | daily | hourly
   status text not null default 'unfilled', -- unfilled | filled
   last_contacted_at timestamptz,
@@ -69,12 +69,42 @@ create table if not exists follow_ups (
   updated_at timestamptz not null default now()
 );
 
+-- ============ SUPPLY GEN ============
+-- Overseas manpower supply companies/agents (e.g. in China, India, Bangladesh) you source workers
+-- through. Follow-ups attach directly to the supply company (no separate "lead" layer needed here).
+create table if not exists supply_companies (
+  id uuid primary key default gen_random_uuid(),
+  name text not null,
+  country text,             -- e.g. China, India, Bangladesh, Myanmar, Sri Lanka ...
+  contact_person text,
+  contact_number text,
+  contact_email text,
+  notes text,
+  custom_fields jsonb not null default '{}'::jsonb,
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now()
+);
+
+create table if not exists supply_follow_ups (
+  id uuid primary key default gen_random_uuid(),
+  supply_company_id uuid not null references supply_companies(id) on delete cascade,
+  action_type text default 'call',   -- call | email | whatsapp | meeting | site_visit | other
+  planned_action text,               -- what needs to be done
+  action_taken text,                 -- what was actually done
+  status text not null default 'pending', -- pending | done | cancelled
+  due_at timestamptz,
+  completed_at timestamptz,
+  custom_fields jsonb not null default '{}'::jsonb,
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now()
+);
+
 -- ============ CUSTOM FIELD DEFINITIONS ============
 -- Lets you add fields to companies / leads / follow_ups from the Settings UI
 -- without ever needing a schema migration. Values live in the custom_fields jsonb column above.
 create table if not exists custom_field_definitions (
   id uuid primary key default gen_random_uuid(),
-  entity_type text not null check (entity_type in ('company','company_sector','lead','follow_up')),
+  entity_type text not null check (entity_type in ('company','company_sector','lead','follow_up','supply_company','supply_follow_up')),
   field_key text not null,      -- machine key, e.g. union_membership
   label text not null,          -- display label, e.g. "Union Membership"
   field_type text not null default 'text', -- text | textarea | number | date | select | checkbox
@@ -153,7 +183,7 @@ language plpgsql
 security definer
 as $$
 begin
-  if target_table not in ('companies', 'company_sectors', 'leads', 'follow_ups') then
+  if target_table not in ('companies', 'company_sectors', 'leads', 'follow_ups', 'supply_companies', 'supply_follow_ups') then
     raise exception 'Invalid target_table: %', target_table;
   end if;
 
@@ -169,6 +199,7 @@ $$;
 create index if not exists idx_company_sectors_company_id on company_sectors(company_id);
 create index if not exists idx_leads_company_id on leads(company_id);
 create index if not exists idx_followups_lead_id on follow_ups(lead_id);
+create index if not exists idx_supply_followups_company_id on supply_follow_ups(supply_company_id);
 create index if not exists idx_cfd_entity on custom_field_definitions(entity_type);
 
 -- NOTE ON SECURITY: this schema ships with Row Level Security OFF, because the app
@@ -179,5 +210,7 @@ alter table companies disable row level security;
 alter table company_sectors disable row level security;
 alter table leads disable row level security;
 alter table follow_ups disable row level security;
+alter table supply_companies disable row level security;
+alter table supply_follow_ups disable row level security;
 alter table custom_field_definitions disable row level security;
 alter table mom_settings disable row level security;

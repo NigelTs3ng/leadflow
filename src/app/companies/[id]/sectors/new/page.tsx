@@ -1,5 +1,6 @@
 import { createCompanySector, getCompanySectorFieldDefs } from "@/app/companies/actions";
 import CustomFieldsInput from "@/components/CustomFieldsInput";
+import SubmitButton from "@/components/SubmitButton";
 import { supabase } from "@/lib/supabase";
 import Link from "next/link";
 import { notFound } from "next/navigation";
@@ -72,9 +73,7 @@ export default async function NewCompanySectorPage({ params }: { params: Promise
 
         <CustomFieldsInput definitions={fieldDefs} />
 
-        <button type="submit" className="btn-primary">
-          Save sector
-        </button>
+        <SubmitButton pendingText="Saving...">Save sector</SubmitButton>
       </form>
     </div>
   );

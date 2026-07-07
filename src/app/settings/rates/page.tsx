@@ -1,4 +1,5 @@
 import { getMomConfigRaw, updateMomConfig } from "@/app/settings/actions";
+import SubmitButton from "@/components/SubmitButton";
 import Link from "next/link";
 
 export const dynamic = "force-dynamic";
@@ -34,9 +35,7 @@ export default async function MomRatesPage() {
           spellCheck={false}
           className="input-field w-full font-mono text-xs p-4"
         />
-        <button type="submit" className="btn-primary">
-          Save rates
-        </button>
+        <SubmitButton pendingText="Saving...">Save rates</SubmitButton>
       </form>
     </div>
   );
