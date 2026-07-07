@@ -10,14 +10,11 @@ export default function NavLink({ href, children }: { href: string; children: Re
   return (
     <Link
       href={href}
-      className={`relative text-sm transition-colors ${
-        active ? "text-cyan-300" : "text-slate-400 hover:text-slate-100"
+      className={`rounded-lg px-3 py-1.5 text-sm font-medium transition-colors whitespace-nowrap ${
+        active ? "bg-cyan-500/10 text-cyan-300" : "text-slate-400 hover:bg-white/5 hover:text-slate-100"
       }`}
     >
       {children}
-      {active && (
-        <span className="absolute -bottom-[13px] left-0 right-0 h-px bg-gradient-to-r from-cyan-400 to-blue-500" />
-      )}
     </Link>
   );
 }
