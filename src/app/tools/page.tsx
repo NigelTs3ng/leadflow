@@ -41,18 +41,28 @@ export default function ToolsPage() {
       </p>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-        {TOOLS.map((tool) => (
-          <a
-            key={tool.label}
-            href={tool.href}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="glass-card block p-4"
-          >
-            <h2 className="font-semibold text-slate-100">{tool.label}</h2>
-            <p className="text-sm text-muted mt-1">{tool.description}</p>
-          </a>
-        ))}
+        {TOOLS.map((tool) => {
+          const domain = new URL(tool.href).hostname;
+          return (
+            <a
+              key={tool.label}
+              href={tool.href}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="glass-card flex items-start gap-3 p-4"
+            >
+              <img
+                src={`https://www.google.com/s2/favicons?domain=${domain}&sz=64`}
+                alt=""
+                className="mt-0.5 h-8 w-8 shrink-0 rounded bg-white/90 p-1"
+              />
+              <div>
+                <h2 className="font-semibold text-slate-100">{tool.label}</h2>
+                <p className="text-sm text-muted mt-1">{tool.description}</p>
+              </div>
+            </a>
+          );
+        })}
       </div>
     </div>
   );
