@@ -16,6 +16,13 @@ function extractCustomFields(formData: FormData, prefix = "cf_"): Record<string,
   return result;
 }
 
+function parseCountries(formData: FormData): string[] {
+  return String(formData.get("country") ?? "")
+    .split(",")
+    .map((c) => c.trim())
+    .filter(Boolean);
+}
+
 export async function createSupplyCompany(formData: FormData) {
   const name = String(formData.get("name") ?? "").trim();
   if (!name) throw new Error("Company name is required.");
@@ -26,7 +33,7 @@ export async function createSupplyCompany(formData: FormData) {
     .from("supply_companies")
     .insert({
       name,
-      country: String(formData.get("country") ?? "").trim(),
+      country: parseCountries(formData),
       contact_person: String(formData.get("contact_person") ?? "").trim(),
       contact_number: String(formData.get("contact_number") ?? "").trim(),
       contact_email: String(formData.get("contact_email") ?? "").trim(),
@@ -51,7 +58,7 @@ export async function updateSupplyCompany(id: string, formData: FormData) {
     .from("supply_companies")
     .update({
       name,
-      country: String(formData.get("country") ?? "").trim(),
+      country: parseCountries(formData),
       contact_person: String(formData.get("contact_person") ?? "").trim(),
       contact_number: String(formData.get("contact_number") ?? "").trim(),
       contact_email: String(formData.get("contact_email") ?? "").trim(),

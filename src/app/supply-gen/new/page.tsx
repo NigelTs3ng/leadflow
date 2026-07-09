@@ -22,7 +22,7 @@ export default async function NewSupplyCompanyPage() {
         </div>
 
         <div>
-          <label className="field-label">Country</label>
+          <label className="field-label">Countries (comma-separated)</label>
           <input name="country" placeholder="e.g. China, India, Bangladesh" className="input-field" />
         </div>
 

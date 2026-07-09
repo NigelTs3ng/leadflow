@@ -75,7 +75,7 @@ create table if not exists follow_ups (
 create table if not exists supply_companies (
   id uuid primary key default gen_random_uuid(),
   name text not null,
-  country text,             -- e.g. China, India, Bangladesh, Myanmar, Sri Lanka ...
+  country text[] not null default '{}'::text[], -- e.g. {China, India, Bangladesh} — a company can source from more than one
   contact_person text,
   contact_number text,
   contact_email text,

@@ -10,6 +10,7 @@ import {
 import CustomFieldsDisplay from "@/components/CustomFieldsDisplay";
 import CustomFieldsInput from "@/components/CustomFieldsInput";
 import SubmitButton from "@/components/SubmitButton";
+import LinkPendingOverlay from "@/components/LinkPendingOverlay";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { format } from "date-fns";
@@ -39,6 +40,7 @@ export default async function SupplyCompanyDetailPage({ params }: { params: Prom
 
   const createFollowUpWithId = createSupplyFollowUp.bind(null, id);
   const deleteCompanyWithId = deleteSupplyCompany.bind(null, id);
+  const wechatNumber = String(company.custom_fields?.wechat_number ?? "").trim();
 
   return (
     <div className="max-w-3xl">
@@ -49,9 +51,18 @@ export default async function SupplyCompanyDetailPage({ params }: { params: Prom
       <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between mt-2 mb-6">
         <div>
           <h1 className="text-2xl font-bold text-slate-100">{company.name}</h1>
-          {company.country && <span className="badge-neutral mt-1">{company.country}</span>}
+          {company.country?.length > 0 && (
+            <div className="flex flex-wrap gap-1 mt-1">
+              {company.country.map((c: string) => (
+                <span key={c} className="badge-neutral">
+                  {c}
+                </span>
+              ))}
+            </div>
+          )}
         </div>
-        <Link href={`/supply-gen/${id}/edit`} className="btn-secondary flex-1 sm:flex-none text-center">
+        <Link href={`/supply-gen/${id}/edit`} className="btn-secondary relative flex-1 sm:flex-none text-center">
+          <LinkPendingOverlay className="rounded-lg" />
           Edit
         </Link>
       </div>
@@ -62,6 +73,46 @@ export default async function SupplyCompanyDetailPage({ params }: { params: Prom
           <Field label="Contact number" value={company.contact_number || "—"} />
           <Field label="Contact email" value={company.contact_email || "—"} />
         </div>
+
+        {(company.contact_number || company.contact_email || wechatNumber) && (
+          <div className="flex flex-wrap gap-2 mt-4 border-t border-white/10 pt-4">
+            {company.contact_number && (
+              <a
+                href={`https://wa.me/${company.contact_number.replace(/\D/g, "")}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="btn-whatsapp"
+              >
+                <svg className="h-4 w-4" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                  <path d="M12.04 2C6.58 2 2.13 6.45 2.13 11.91c0 1.75.46 3.45 1.32 4.95L2 22l5.29-1.39a9.9 9.9 0 0 0 4.75 1.21h.01c5.46 0 9.9-4.45 9.9-9.91 0-2.65-1.03-5.13-2.9-7-1.87-1.88-4.35-2.91-7-2.91Zm0 18.13a8.2 8.2 0 0 1-4.19-1.15l-.3-.18-3.14.82.84-3.06-.2-.32a8.2 8.2 0 0 1-1.26-4.33c0-4.54 3.7-8.24 8.25-8.24 2.2 0 4.27.86 5.83 2.42a8.19 8.19 0 0 1 2.41 5.83c0 4.55-3.7 8.25-8.24 8.25Zm4.52-6.17c-.25-.12-1.47-.72-1.7-.81-.23-.08-.39-.12-.56.13-.16.24-.64.8-.78.97-.14.16-.29.18-.54.06-.25-.12-1.04-.38-1.99-1.22-.73-.65-1.23-1.46-1.37-1.71-.14-.24-.02-.38.11-.5.11-.11.25-.29.37-.43.12-.14.16-.24.25-.4.08-.16.04-.31-.02-.43-.06-.12-.56-1.34-.76-1.84-.2-.48-.4-.42-.56-.42h-.48c-.16 0-.43.06-.65.31-.23.24-.86.84-.86 2.05 0 1.21.88 2.38 1 2.54.12.16 1.73 2.64 4.2 3.7.59.25 1.04.4 1.4.52.59.19 1.12.16 1.55.1.47-.07 1.47-.6 1.68-1.18.2-.58.2-1.08.14-1.18-.06-.1-.23-.16-.48-.28Z" />
+                </svg>
+                WhatsApp
+              </a>
+            )}
+            {company.contact_email && (
+              <a href={`mailto:${company.contact_email}`} className="btn-email">
+                <svg className="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M3 6.75A2.25 2.25 0 0 1 5.25 4.5h13.5A2.25 2.25 0 0 1 21 6.75v10.5A2.25 2.25 0 0 1 18.75 19.5H5.25A2.25 2.25 0 0 1 3 17.25V6.75Z" />
+                  <path strokeLinecap="round" strokeLinejoin="round" d="m3.5 7 8.5 6 8.5-6" />
+                </svg>
+                Email
+              </a>
+            )}
+            {wechatNumber && (
+              <a href={`tel:${wechatNumber.replace(/[^\d+]/g, "")}`} className="btn-wechat">
+                <svg className="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    d="M2.25 6.75c0 8.284 6.716 15 15 15h1.5a2.25 2.25 0 0 0 2.25-2.25v-1.372c0-.516-.351-.966-.852-1.091l-4.423-1.106a1.125 1.125 0 0 0-1.173.417l-.97 1.293c-.282.376-.769.542-1.21.38a12.035 12.035 0 0 1-7.143-7.143c-.162-.441.004-.928.38-1.21l1.293-.97a1.125 1.125 0 0 0 .417-1.173L6.963 3.102a1.125 1.125 0 0 0-1.091-.852H4.5A2.25 2.25 0 0 0 2.25 4.5v2.25Z"
+                  />
+                </svg>
+                Call (WeChat)
+              </a>
+            )}
+          </div>
+        )}
+
         {company.notes && <p className="mt-3 text-slate-300 whitespace-pre-wrap">{company.notes}</p>}
         <CustomFieldsDisplay definitions={fieldDefs} values={company.custom_fields} />
       </div>

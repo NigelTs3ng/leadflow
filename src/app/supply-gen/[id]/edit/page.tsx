@@ -30,8 +30,13 @@ export default async function EditSupplyCompanyPage({ params }: { params: Promis
         </div>
 
         <div>
-          <label className="field-label">Country</label>
-          <input name="country" defaultValue={company.country ?? ""} className="input-field" />
+          <label className="field-label">Countries (comma-separated)</label>
+          <input
+            name="country"
+            placeholder="e.g. China, India, Bangladesh"
+            defaultValue={(company.country ?? []).join(", ")}
+            className="input-field"
+          />
         </div>
 
         <div className="grid grid-cols-2 gap-4">

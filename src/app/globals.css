@@ -55,6 +55,15 @@ body {
   .btn-danger-link {
     @apply text-sm font-medium text-rose-400 transition-colors hover:text-rose-300;
   }
+  .btn-whatsapp {
+    @apply inline-flex items-center justify-center gap-1.5 rounded-lg border border-emerald-500/30 bg-emerald-500/15 px-3 py-2 text-sm font-medium text-emerald-300 transition-all duration-200 hover:bg-emerald-500/25 hover:text-emerald-200;
+  }
+  .btn-email {
+    @apply inline-flex items-center justify-center gap-1.5 rounded-lg border border-sky-500/30 bg-sky-500/15 px-3 py-2 text-sm font-medium text-sky-300 transition-all duration-200 hover:bg-sky-500/25 hover:text-sky-200;
+  }
+  .btn-wechat {
+    @apply inline-flex items-center justify-center gap-1.5 rounded-lg border border-violet-500/30 bg-violet-500/15 px-3 py-2 text-sm font-medium text-violet-300 transition-all duration-200 hover:bg-violet-500/25 hover:text-violet-200;
+  }
   .link-back {
     @apply inline-flex items-center gap-1 text-sm text-slate-400 transition-colors hover:text-cyan-300;
   }
